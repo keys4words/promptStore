@@ -12,17 +12,38 @@
 
 ### 1. Установка зависимостей
 
+**Стандартная установка:**
 ```powershell
 npm install
 ```
 
-### 2. Настройка базы данных (NeonDB)
+**Если возникают проблемы с сетью (ошибка `ECONNRESET`):**
+```powershell
+# Установка без выполнения postinstall скриптов
+npm install --ignore-scripts
+```
+
+**Примечание:** Если при установке возникает ошибка `ECONNRESET` в `postinstall`, это нормально. Пакеты установятся, но Prisma Client нужно будет сгенерировать вручную (см. следующий шаг).
+
+### 2. Генерация Prisma Client
+
+```powershell
+npm run db:generate
+```
+
+Или вручную:
+
+```powershell
+npx prisma generate
+```
+
+### 3. Настройка базы данных (NeonDB)
 
 1. Создайте аккаунт на [neon.tech](https://neon.tech)
 2. Создайте новый проект и базу данных
 3. Скопируйте connection string из панели NeonDB
 
-### 3. Настройка переменных окружения
+### 4. Настройка переменных окружения
 
 Создайте файл `.env` в корне проекта:
 
@@ -37,7 +58,7 @@ Copy-Item .env.example .env
 DATABASE_URL="postgresql://username:password@ep-xxx-xxx.region.aws.neon.tech/dbname?sslmode=require"
 ```
 
-### 4. Настройка Prisma и миграция базы данных
+### 5. Настройка Prisma и миграция базы данных
 
 ```powershell
 # Применить схему к базе данных
@@ -47,13 +68,13 @@ npm run db:push
 npm run db:migrate
 ```
 
-### 5. Заполнение базы данных тестовыми данными (опционально)
+### 6. Заполнение базы данных тестовыми данными (опционально)
 
 ```powershell
 npm run db:seed
 ```
 
-### 6. Запуск проекта
+### 7. Запуск проекта
 
 ```powershell
 # Режим разработки
@@ -63,6 +84,23 @@ npm run dev
 Откройте [http://localhost:3000](http://localhost:3000) в браузере.
 
 ## Деплой на Vercel
+
+### Важно: Prisma Client в Vercel
+
+**Prisma Client генерируется автоматически в Vercel!** 
+
+В `package.json` уже настроен build скрипт:
+```json
+"build": "prisma generate && next build"
+```
+
+Это означает, что при каждом деплое Vercel автоматически:
+1. Выполняет `prisma generate` (генерирует Prisma Client)
+2. Выполняет `next build` (собирает Next.js приложение)
+
+**Вам не нужно вручную выполнять `npm run db:generate` в Vercel** - это происходит автоматически при сборке.
+
+**В NeonDB** это выполнять нельзя - NeonDB это только база данных (PostgreSQL), там нет возможности запускать npm команды.
 
 ### 1. Подготовка
 
@@ -136,6 +174,7 @@ vercel
 npm run dev          # Запуск dev сервера
 
 # База данных
+npm run db:generate  # Сгенерировать Prisma Client
 npm run db:push      # Применить схему к БД
 npm run db:migrate   # Создать и применить миграцию
 npm run db:seed      # Заполнить БД тестовыми данными
@@ -149,7 +188,8 @@ npm run lint         # Проверка кода линтером
 ## Важные замечания
 
 - Для Vercel: переменная `DATABASE_URL` должна быть установлена в настройках проекта
-- Prisma Client генерируется автоматически при сборке (`postinstall` скрипт)
+- Prisma Client генерируется автоматически при сборке (`npm run build`)
+- После установки зависимостей выполните `npm run db:generate` для генерации Prisma Client
 - В продакшене используйте `npm run db:migrate` вместо `npm run db:push`
 - NeonDB поддерживает serverless режим и отлично работает с Vercel
 
@@ -175,6 +215,50 @@ npm run db:migrate
 # 3. Заполните базу данных тестовыми данными
 npm run db:seed
 ```
+
+### Ошибка `ECONNRESET` при `npm install`
+
+Если при установке зависимостей возникает ошибка `ECONNRESET` в `postinstall` скрипте пакета `@prisma/engines`:
+
+**Вариант 1: Установка с игнорированием скриптов (рекомендуется)**
+
+```powershell
+# Установить зависимости без выполнения postinstall скриптов
+npm install --ignore-scripts
+
+# Затем вручную сгенерировать Prisma Client
+npm run db:generate
+```
+
+**Вариант 2: Повторная попытка установки**
+
+Иногда проблема решается повторной установкой:
+
+```powershell
+# Очистить кэш и node_modules
+Remove-Item -Recurse -Force node_modules
+Remove-Item package-lock.json -ErrorAction SilentlyContinue
+
+# Повторная установка
+npm install
+
+# Если ошибка повторилась, выполните:
+npm run db:generate
+```
+
+**Вариант 3: Продолжить работу без генерации**
+
+Если установка завершилась с ошибкой, но пакеты установлены:
+
+```powershell
+# Проверьте, что node_modules существует
+Test-Path node_modules
+
+# Если да, просто сгенерируйте Prisma Client
+npm run db:generate
+```
+
+**Примечание:** Prisma Client будет автоматически сгенерирован при выполнении `npm run build` или при запуске команд `db:push`/`db:migrate`.
 
 ### Ошибка подключения к базе данных
 
