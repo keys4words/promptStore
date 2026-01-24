@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
+import { Note } from '@prisma/client'
 
-async function getNotes() {
+async function getNotes(): Promise<Note[]> {
   try {
     const notes = await prisma.note.findMany({
       orderBy: {
@@ -15,8 +16,8 @@ async function getNotes() {
 }
 
 export default async function Home() {
-  let notes = []
-  let error = null
+  let notes: Note[] = []
+  let error: string | null = null
 
   try {
     notes = await getNotes()
