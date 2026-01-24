@@ -35,6 +35,18 @@ export default async function Home() {
       {error && (
         <div className="error">
           <strong>Error:</strong> {error}
+          {error.includes('does not exist') && (
+            <div style={{ marginTop: '1rem', fontSize: '0.9rem' }}>
+              <p><strong>Решение:</strong> Выполните миграцию базы данных:</p>
+              <code style={{ display: 'block', marginTop: '0.5rem', padding: '0.5rem', background: '#fff', borderRadius: '4px' }}>
+                npm run db:push
+              </code>
+              <p style={{ marginTop: '0.5rem' }}>или</p>
+              <code style={{ display: 'block', marginTop: '0.5rem', padding: '0.5rem', background: '#fff', borderRadius: '4px' }}>
+                npm run db:migrate
+              </code>
+            </div>
+          )}
         </div>
       )}
 
