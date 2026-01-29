@@ -1,12 +1,12 @@
-# Next.js + Prisma + NeonDB
+# Next.js + Prisma + Supabase
 
-Минимальный рабочий проект на Next.js (App Router) + Prisma + NeonDB (PostgreSQL), готовый к деплою на Vercel.
+Минимальный рабочий проект на Next.js (App Router) + Prisma + Supabase (PostgreSQL), готовый к деплою на Vercel.
 
 ## Требования
 
 - Node.js 18+ 
 - npm или yarn
-- Аккаунт на [NeonDB](https://neon.tech) для PostgreSQL базы данных
+- Аккаунт на [Supabase](https://supabase.com) для PostgreSQL базы данных
 
 ## Установка
 
@@ -37,26 +37,49 @@ npm run db:generate
 npx prisma generate
 ```
 
-### 3. Настройка базы данных (NeonDB)
+**Примечание:** Если при генерации возникает ошибка `ECONNRESET`, это не критично. Prisma Client будет автоматически сгенерирован при выполнении `npm run db:push`, `npm run db:migrate` или `npm run build`. См. раздел "Решение проблем" для подробностей.
 
-1. Создайте аккаунт на [neon.tech](https://neon.tech)
-2. Создайте новый проект и базу данных
-3. Скопируйте connection string из панели NeonDB
+### 3. Настройка базы данных (Supabase)
+
+1. Создайте аккаунт на [supabase.com](https://supabase.com)
+2. Создайте новый проект
+3. В настройках проекта найдите:
+   - **Project URL** (например: `https://abcdefghijklmnop.supabase.co`)
+   - **Database Password** (пароль, который вы установили при создании проекта)
 
 ### 4. Настройка переменных окружения
+
+**Вариант A: Использование скрипта (рекомендуется)**
+
+```powershell
+# Запустите скрипт настройки
+.\scripts\setup-env.ps1 -ProjectUrl "https://your-project-ref.supabase.co" -DbPassword "your-database-password"
+```
+
+**Вариант B: Ручная настройка**
 
 Создайте файл `.env` в корне проекта:
 
 ```powershell
-# Скопируйте .env.example
-Copy-Item .env.example .env
+# Скопируйте env.example.txt в .env
+Copy-Item env.example.txt .env
 ```
 
-Отредактируйте `.env` и добавьте ваш DATABASE_URL из NeonDB:
+Отредактируйте `.env` и добавьте ваши данные Supabase:
 
 ```env
-DATABASE_URL="postgresql://username:password@ep-xxx-xxx.region.aws.neon.tech/dbname?sslmode=require"
+# Supabase Configuration
+SUPABASE_PROJECT_URL="https://your-project-ref.supabase.co"
+SUPABASE_DB_PASSWORD="your-database-password"
+
+# Database Connection String
+# Формат: postgresql://postgres:[PASSWORD]@[PROJECT_REF].supabase.co:5432/postgres
+DATABASE_URL="postgresql://postgres:your-database-password@your-project-ref.supabase.co:5432/postgres?sslmode=require"
 ```
+
+**Как получить Project Reference:**
+- Из Project URL: `https://abcdefghijklmnop.supabase.co` → `abcdefghijklmnop`
+- Или в настройках проекта Supabase: Settings → API → Project URL
 
 ### 5. Настройка Prisma и миграция базы данных
 
@@ -100,7 +123,7 @@ npm run dev
 
 **Вам не нужно вручную выполнять `npm run db:generate` в Vercel** - это происходит автоматически при сборке.
 
-**В NeonDB** это выполнять нельзя - NeonDB это только база данных (PostgreSQL), там нет возможности запускать npm команды.
+**В Supabase** это выполнять нельзя - Supabase это только база данных (PostgreSQL), там нет возможности запускать npm команды.
 
 ### 1. Подготовка
 
@@ -127,9 +150,15 @@ vercel
 1. Загрузите проект на GitHub
 2. Перейдите на [vercel.com](https://vercel.com)
 3. Импортируйте ваш репозиторий
-4. В настройках проекта добавьте переменную окружения:
+4. В настройках проекта добавьте переменные окружения:
    - **Name**: `DATABASE_URL`
-   - **Value**: ваш connection string из NeonDB
+   - **Value**: `postgresql://postgres:[YOUR_PASSWORD]@[YOUR_PROJECT_REF].supabase.co:5432/postgres?sslmode=require`
+   
+   Или добавьте отдельно:
+   - **Name**: `SUPABASE_PROJECT_URL`
+   - **Value**: `https://your-project-ref.supabase.co`
+   - **Name**: `SUPABASE_DB_PASSWORD`
+   - **Value**: `your-database-password`
 5. Нажмите "Deploy"
 
 ### 4. Настройка переменных окружения в Vercel
@@ -137,7 +166,10 @@ vercel
 После первого деплоя:
 1. Перейдите в настройки проекта в Vercel
 2. Откройте "Environment Variables"
-3. Добавьте `DATABASE_URL` с вашим connection string из NeonDB
+3. Добавьте `DATABASE_URL` с вашим connection string из Supabase:
+   ```
+   postgresql://postgres:[PASSWORD]@[PROJECT_REF].supabase.co:5432/postgres?sslmode=require
+   ```
 4. Перезапустите деплой
 
 ## Структура проекта
@@ -153,7 +185,11 @@ vercel
 ├── prisma/
 │   ├── schema.prisma       # Prisma схема
 │   └── seed.ts             # Скрипт для заполнения БД
-├── .env.example            # Пример файла с переменными окружения
+├── env.example.txt         # Пример файла с переменными окружения
+├── scripts/
+│   ├── setup-env.ps1       # Скрипт для настройки .env из Supabase
+│   ├── download-prisma-engines.ps1  # Скрипт для ручной загрузки Prisma engines
+│   └── manual-prisma-setup.md     # Подробная инструкция по ручной установке
 ├── next.config.js          # Конфигурация Next.js
 ├── package.json            # Зависимости и скрипты
 └── tsconfig.json           # TypeScript конфигурация
@@ -191,7 +227,7 @@ npm run lint         # Проверка кода линтером
 - Prisma Client генерируется автоматически при сборке (`npm run build`)
 - После установки зависимостей выполните `npm run db:generate` для генерации Prisma Client
 - В продакшене используйте `npm run db:migrate` вместо `npm run db:push`
-- NeonDB поддерживает serverless режим и отлично работает с Vercel
+- Supabase поддерживает serverless режим и отлично работает с Vercel
 
 ## Решение проблем
 
@@ -260,11 +296,140 @@ npm run db:generate
 
 **Примечание:** Prisma Client будет автоматически сгенерирован при выполнении `npm run build` или при запуске команд `db:push`/`db:migrate`.
 
+### Ошибка `ECONNRESET` при `npm run db:generate`
+
+Если при генерации Prisma Client возникает ошибка `ECONNRESET` при загрузке engines:
+
+**Вариант 1: Пропустить генерацию (рекомендуется для разработки)**
+
+Prisma Client будет автоматически сгенерирован при выполнении других команд:
+
+```powershell
+# Просто пропустите db:generate и продолжайте работу
+# Prisma Client сгенерируется автоматически при:
+npm run db:push
+# или
+npm run build
+```
+
+**Вариант 2: Повторные попытки**
+
+Иногда помогает повторный запуск:
+
+```powershell
+# Попробуйте несколько раз
+npm run db:generate
+# Если не сработало, попробуйте еще раз через несколько секунд
+npm run db:generate
+```
+
+**Вариант 3: Использование переменных окружения для Prisma**
+
+Настройте Prisma для использования альтернативного источника engines:
+
+```powershell
+# Установите переменную окружения перед генерацией
+$env:PRISMA_ENGINES_MIRROR="https://binaries.prisma.sh"
+npm run db:generate
+```
+
+**Вариант 4: Использование кэшированных engines**
+
+Если engines уже были загружены ранее:
+
+```powershell
+# Проверьте наличие engines в кэше
+Test-Path "$env:USERPROFILE\.cache\prisma"
+
+# Если engines есть в кэше, Prisma может использовать их
+npm run db:generate
+```
+
+**Вариант 5: Продолжить без генерации**
+
+Если генерация не критична на данном этапе:
+
+```powershell
+# Просто продолжайте работу - Prisma Client будет сгенерирован:
+# 1. При сборке: npm run build
+# 2. При применении схемы: npm run db:push
+# 3. При создании миграции: npm run db:migrate
+```
+
+**Важно:** В Vercel генерация Prisma Client происходит автоматически при сборке, поэтому локальная генерация не обязательна для деплоя.
+
+### Ручная загрузка Prisma Engines (Windows)
+
+Если автоматическая загрузка engines не работает, вы можете скачать и установить их вручную:
+
+**Способ 1: Использование скрипта (рекомендуется)**
+
+```powershell
+# Автоматическая загрузка и установка engines
+.\scripts\download-prisma-engines.ps1
+```
+
+Скрипт автоматически определит версию Prisma и загрузит все необходимые engines.
+
+**Способ 2: Ручная загрузка через браузер**
+
+1. **Определите версию engines:**
+   ```powershell
+   # Проверьте версию в package.json или выполните:
+   npm list prisma
+   ```
+
+2. **Скачайте файлы вручную:**
+   
+   Для Prisma 5.22.0 (Windows x64), скачайте с:
+   ```
+   https://binaries.prisma.sh/all_commits/5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2/windows-x64/
+   ```
+   
+   Необходимые файлы:
+   - `query-engine-windows.exe.node`
+   - `migration-engine-windows.exe`
+   - `introspection-engine-windows.exe`
+   - `prisma-fmt-windows.exe`
+
+3. **Установите файлы:**
+   ```powershell
+   # Создайте директорию
+   $enginesDir = "node_modules\@prisma\engines"
+   New-Item -ItemType Directory -Path $enginesDir -Force
+   
+   # Скопируйте скачанные файлы
+   Copy-Item "query-engine-windows.exe.node" "$enginesDir\"
+   Copy-Item "migration-engine-windows.exe" "$enginesDir\"
+   Copy-Item "introspection-engine-windows.exe" "$enginesDir\"
+   Copy-Item "prisma-fmt-windows.exe" "$enginesDir\"
+   ```
+
+4. **Проверьте установку:**
+   ```powershell
+   npm run db:generate
+   ```
+
+**Способ 3: Копирование из другого проекта**
+
+Если у вас есть рабочий проект с Prisma:
+
+```powershell
+# Скопируйте engines из рабочего проекта
+$source = "C:\path\to\working-project\node_modules\@prisma\engines"
+$target = "node_modules\@prisma\engines"
+Copy-Item -Path "$source\*" -Destination $target -Recurse -Force
+```
+
+**Подробная инструкция:** См. `scripts/manual-prisma-setup.md` для детальных шагов.
+
 ### Ошибка подключения к базе данных
 
 1. Проверьте, что файл `.env` существует и содержит правильный `DATABASE_URL`
-2. Убедитесь, что connection string из NeonDB включает `?sslmode=require`
-3. Проверьте, что база данных активна в панели NeonDB
+2. Убедитесь, что connection string включает `?sslmode=require`
+3. Проверьте формат DATABASE_URL: `postgresql://postgres:[PASSWORD]@[PROJECT_REF].supabase.co:5432/postgres?sslmode=require`
+4. Проверьте, что проект активен в панели Supabase
+5. Убедитесь, что Project Reference и Database Password указаны правильно
 
 ### Ошибка при деплое на Vercel
 

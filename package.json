@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-prisma-neon",
+  "name": "nextjs-prisma-supabase",
   "version": "0.1.0",
   "private": true,
   "scripts": {

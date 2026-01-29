@@ -28,8 +28,8 @@ export default async function Home() {
   return (
     <div className="container">
       <div className="header">
-        <h1>Next.js + Prisma + NeonDB</h1>
-        <p>Reading data from PostgreSQL (Neon) database</p>
+        <h1>Next.js + Prisma + Supabase</h1>
+        <p>Reading data from PostgreSQL (Supabase) database</p>
       </div>
 
       {error && (
