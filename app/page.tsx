@@ -1,14 +1,12 @@
 import { prisma } from '@/lib/prisma'
-import { Note } from '@prisma/client'
+import type { Note } from '@prisma/client'
 
 async function getNotes(): Promise<Note[]> {
   try {
-    const notes = await prisma.note.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
+    const allNotes = await prisma.note.findMany({
+      orderBy: { createdAt: 'desc' },
     })
-    return notes
+    return allNotes
   } catch (error) {
     console.error('Error fetching notes:', error)
     throw error
@@ -16,11 +14,11 @@ async function getNotes(): Promise<Note[]> {
 }
 
 export default async function Home() {
-  let notes: Note[] = []
+  let notesData: Note[] = []
   let error: string | null = null
 
   try {
-    notes = await getNotes()
+    notesData = await getNotes()
   } catch (e) {
     error = e instanceof Error ? e.message : 'Failed to fetch notes'
   }
@@ -28,8 +26,8 @@ export default async function Home() {
   return (
     <div className="container">
       <div className="header">
-        <h1>Next.js + Prisma + Supabase</h1>
-        <p>Reading data from PostgreSQL (Supabase) database</p>
+        <h1>Next.js + Prisma + NeonDB</h1>
+        <p>Reading data from PostgreSQL (NeonDB) database</p>
       </div>
 
       {error && (
@@ -50,16 +48,16 @@ export default async function Home() {
         </div>
       )}
 
-      {!error && notes.length === 0 && (
+      {!error && notesData.length === 0 && (
         <div className="empty-state">
           <p>No notes found. Run the seed script to populate the database:</p>
           <code>npm run db:seed</code>
         </div>
       )}
 
-      {!error && notes.length > 0 && (
+      {!error && notesData.length > 0 && (
         <div className="notes-grid">
-          {notes.map((note) => (
+          {notesData.map((note) => (
             <div key={note.id} className="note-card">
               <div className="note-title">{note.title}</div>
               <div className="note-date">
@@ -72,4 +70,3 @@ export default async function Home() {
     </div>
   )
 }
-

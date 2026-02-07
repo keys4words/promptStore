@@ -1,20 +1,18 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma schema for PostgreSQL (NeonDB)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
 }
 
 model Note {
-  id        String   @id @default(uuid())
-  title     String
+  id        String   @id @default(uuid()) @db.Uuid
+  title     String   @db.VarChar(255)
   createdAt DateTime @default(now()) @map("created_at")
-  
+
   @@map("notes")
 }
-
