@@ -84,3 +84,322 @@ body {
   margin-top: 2rem;
 }
 
+/* View DB */
+.view-db-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.view-db-container h1 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+.view-db-controls {
+  margin-bottom: 1.5rem;
+}
+.view-db-controls label span {
+  margin-right: 0.5rem;
+}
+.view-db-controls select {
+  padding: 0.35rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+.view-db-loading,
+.view-db-error {
+  padding: 1rem;
+}
+.view-db-error {
+  color: #c33;
+  background: #fee;
+  border-radius: 8px;
+}
+.view-db-table-list h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+.view-db-table-list ul {
+  list-style: none;
+  padding: 0;
+}
+.view-db-table-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  background: #fff;
+}
+.view-db-btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.view-db-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+}
+.view-db-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.view-db-btn-open {
+  color: #0066cc;
+  border-color: #0066cc;
+}
+.view-db-btn-open:hover {
+  background: #e6f2ff;
+}
+.view-db-btn-back {
+  margin-bottom: 1rem;
+}
+.view-db-btn-create,
+.view-db-btn-primary {
+  background: #0066cc;
+  color: #fff;
+  border-color: #0066cc;
+}
+.view-db-btn-create:hover,
+.view-db-btn-primary:hover {
+  background: #0052a3;
+}
+.view-db-btn-danger {
+  background: #dc3545;
+  color: #fff;
+  border-color: #dc3545;
+  margin-left: 0.5rem;
+}
+.view-db-btn-danger:hover {
+  background: #c82333;
+}
+.view-db-btn-sm {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+}
+.view-db-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.view-db-header h1 {
+  flex: 1;
+  margin: 0;
+}
+.view-db-toolbar {
+  margin-bottom: 1rem;
+}
+.view-db-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.view-db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.view-db-table th,
+.view-db-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+.view-db-table th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+.view-db-table tr:hover {
+  background: #f8f9fa;
+}
+.view-db-pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.view-db-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.view-db-modal {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  min-width: 320px;
+  max-width: 90vw;
+}
+.view-db-modal h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.view-db-modal label {
+  display: block;
+  margin-bottom: 0.75rem;
+}
+.view-db-modal label span {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+.view-db-modal input {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.view-db-modal-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Login */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.login-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 2.5rem;
+  text-align: center;
+  max-width: 360px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.login-card h1 {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+.login-subtitle {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+.login-error {
+  color: #c33;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #fee;
+  border-radius: 6px;
+}
+.login-hint {
+  color: #888;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.login-btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  font-size: 1rem;
+  background: #4285f4;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.login-btn:hover {
+  background: #3367d6;
+}
+
+/* Dashboard */
+.dashboard-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.dashboard-header h1 {
+  margin: 0;
+}
+.dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.dashboard-avatar {
+  border-radius: 50%;
+}
+.dashboard-nav {
+  margin-bottom: 1.5rem;
+}
+.dashboard-link {
+  color: #0066cc;
+  text-decoration: none;
+}
+.dashboard-link:hover {
+  text-decoration: underline;
+}
+.dashboard-welcome code {
+  background: #f0f0f0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+.btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+}
+.btn-outline:hover {
+  background: #f5f5f5;
+}
+.prompts-list {
+  list-style: none;
+  padding: 0;
+}
+.prompt-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: #fff;
+}
+.prompt-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+.prompt-visibility {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0;
+}
+.prompt-category {
+  font-size: 0.8rem;
+  background: #e8e8e8;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+

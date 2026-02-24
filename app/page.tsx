@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import type { Note } from '@prisma/client'
 
@@ -26,7 +27,12 @@ export default async function Home() {
   return (
     <div className="container">
       <div className="header">
-        <h1>Next.js + Prisma + NeonDB</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h1>ProStore</h1>
+          <Link href="/login" className="btn btn-outline" style={{ textDecoration: 'none' }}>
+            Войти
+          </Link>
+        </div>
         <p>Reading data from PostgreSQL (NeonDB) database</p>
       </div>
 

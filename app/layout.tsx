@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Next.js + Prisma + NeonDB',
-  description: 'Minimal working example with Next.js, Prisma, and NeonDB',
+  title: 'ProStore — Prompt Store',
+  description: 'Prompt Store with Next.js, Prisma, Auth.js, NeonDB',
 }
 
 export default function RootLayout({

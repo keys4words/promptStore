@@ -1,6 +1,6 @@
-# Next.js + Prisma + NeonDB
+# ProStore (Prompt Store)
 
-Минимальный рабочий проект на Next.js (App Router) + Prisma ORM + NeonDB (PostgreSQL), готовый к деплою на Vercel.
+SaaS-проект на Next.js (App Router) + Prisma + NeonDB + Auth.js (Google OAuth), готовый к деплою на Vercel.
 
 ## Преимущества Prisma
 
@@ -37,9 +37,20 @@ npm install
 Создайте файл `.env` в корне проекта:
 
 ```env
-# NeonDB Connection String
-# Получите из панели NeonDB: Settings → Connection Details
+# Database (NeonDB)
 DATABASE_URL="postgresql://user:password@ep-xxx-xxx.region.aws.neon.tech/database?sslmode=require"
+
+# Auth.js (NextAuth) — OAuth Google
+NEXTAUTH_URL="http://localhost:3000"
+AUTH_SECRET="сгенерируйте: openssl rand -base64 32"
+GOOGLE_CLIENT_ID="ваш-google-client-id"
+GOOGLE_CLIENT_SECRET="ваш-google-client-secret"
+```
+
+Для AUTH_SECRET:
+```powershell
+# PowerShell — сгенерировать секрет
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
 ```
 
 **Пример:**
@@ -257,6 +268,52 @@ npm run db:push
 1. Убедитесь, что `DATABASE_URL` добавлен в переменные окружения Vercel
 2. Проверьте, что все зависимости установлены в `package.json`
 3. Убедитесь, что `prisma generate` выполняется при сборке (postinstall)
+
+## Аутентификация (Auth.js)
+
+- OAuth через Google
+- Server-side сессии (Prisma)
+- Защищённые страницы: `/dashboard`, `/my-prompts`
+- При первом входе пользователь создаётся в БД (таблица `users`)
+
+**Страницы:**
+- `/login` — вход через Google, редирект в /dashboard если уже авторизован
+- `/dashboard` — личный кабинет
+- `/my-prompts` — промты текущего пользователя (только владелец видит свои приватные)
+
+**Проверка сессии (server-side):**
+```typescript
+import { auth } from '@/auth'
+
+const session = await auth()
+const userId = session?.user?.id
+```
+
+После добавления Auth.js выполните миграцию БД:
+```powershell
+npm run db:push
+```
+
+## View DB (тестовая программа)
+
+Программа для просмотра и редактирования данных в локальной или рабочей БД.
+
+**URL:** [http://localhost:3000/view-db](http://localhost:3000/view-db)
+
+**Функции:**
+- Выбор БД: локальная (`DATABASE_URL`) или рабочая (`DATABASE_URL_PROD`)
+- Список таблиц с кнопкой «Открыть»
+- Таблица с пагинацией
+- CRUD: Создать, Изменить, Удалить
+
+**Переменные окружения:**
+- `DATABASE_URL` — локальная БД
+- `DATABASE_URL_PROD` — рабочая БД (если не задана, используется `DATABASE_URL`)
+
+```powershell
+npm run dev
+# Откройте http://localhost:3000/view-db
+```
 
 ## Полезные ссылки
 
