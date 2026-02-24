@@ -19,7 +19,7 @@ export async function GET(
     const skip = (page - 1) * limit
     const modelName = getModelName(table)
 
-    const model = (prisma as Record<string, unknown>)[modelName] as { findMany: (opts: object) => Promise<unknown[]>; count: () => Promise<number> }
+    const model = (prisma as unknown as Record<string, unknown>)[modelName] as { findMany: (opts: object) => Promise<unknown[]>; count: () => Promise<number> }
     if (!model?.findMany) {
       await prisma.$disconnect()
       return NextResponse.json({ error: 'Table not found' }, { status: 404 })
@@ -59,7 +59,7 @@ export async function POST(
 
     const prisma = getPrismaClient(db)
     const modelName = getModelName(table)
-    const model = (prisma as Record<string, unknown>)[modelName] as { create: (opts: { data: object }) => Promise<unknown> }
+    const model = (prisma as unknown as Record<string, unknown>)[modelName] as { create: (opts: { data: object }) => Promise<unknown> }
     if (!model?.create) {
       await prisma.$disconnect()
       return NextResponse.json({ error: 'Table not found' }, { status: 404 })

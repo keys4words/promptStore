@@ -15,7 +15,7 @@ export async function GET(
     const db = (request.nextUrl.searchParams.get('db') || 'local') as DbType
     const prisma = getPrismaClient(db)
     const modelName = getModelName(table)
-    const model = (prisma as Record<string, unknown>)[modelName] as { findUnique: (opts: object) => Promise<unknown> }
+    const model = (prisma as unknown as Record<string, unknown>)[modelName] as { findUnique: (opts: object) => Promise<unknown> }
     if (!model?.findUnique) {
       await prisma.$disconnect()
       return NextResponse.json({ error: 'Table not found' }, { status: 404 })
@@ -47,7 +47,7 @@ export async function PUT(
 
     const prisma = getPrismaClient(db)
     const modelName = getModelName(table)
-    const model = (prisma as Record<string, unknown>)[modelName] as { update: (opts: object) => Promise<unknown> }
+    const model = (prisma as unknown as Record<string, unknown>)[modelName] as { update: (opts: object) => Promise<unknown> }
     if (!model?.update) {
       await prisma.$disconnect()
       return NextResponse.json({ error: 'Table not found' }, { status: 404 })
@@ -75,7 +75,7 @@ export async function DELETE(
     const db = (request.nextUrl.searchParams.get('db') || 'local') as DbType
     const prisma = getPrismaClient(db)
     const modelName = getModelName(table)
-    const model = (prisma as Record<string, unknown>)[modelName] as { delete: (opts: object) => Promise<unknown> }
+    const model = (prisma as unknown as Record<string, unknown>)[modelName] as { delete: (opts: object) => Promise<unknown> }
     if (!model?.delete) {
       await prisma.$disconnect()
       return NextResponse.json({ error: 'Table not found' }, { status: 404 })
