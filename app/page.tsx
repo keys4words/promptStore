@@ -33,7 +33,7 @@ export default async function Home() {
             Войти
           </Link>
         </div>
-        <p>Reading data from PostgreSQL (NeonDB) database</p>
+        <p>Reading data from PostgreSQL (Supabase) database</p>
       </div>
 
       {error && (

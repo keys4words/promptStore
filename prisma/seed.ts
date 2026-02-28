@@ -22,7 +22,7 @@ async function main() {
 
   await prisma.note.createMany({
     data: [
-      { title: 'Welcome to Next.js + Prisma + NeonDB', ownerId: user.id },
+      { title: 'Welcome to Next.js + Prisma + Supabase', ownerId: user.id },
       { title: 'This is a sample note from the seed script', ownerId: user.id },
       { title: 'Ready for deployment on Vercel!', ownerId: user.id },
     ],

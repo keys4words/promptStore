@@ -1,4 +1,4 @@
-// Prisma schema for PostgreSQL (NeonDB)
+// Prisma schema for PostgreSQL (Supabase)
 // Based on DATABASE.md
 
 generator client {
@@ -8,6 +8,8 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  // Optional direct connection (recommended for migrations/DDL with poolers)
+  directUrl = env("DIRECT_URL")
 }
 
 enum Visibility {

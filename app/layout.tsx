@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'ProStore — Prompt Store',
-  description: 'Prompt Store with Next.js, Prisma, Auth.js, NeonDB',
+  description: 'Prompt Store with Next.js, Prisma, Auth.js, Supabase',
 }
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 # ProStore (Prompt Store)
 
-SaaS-проект на Next.js (App Router) + Prisma + NeonDB + Auth.js (Google OAuth), готовый к деплою на Vercel.
+SaaS-проект на Next.js (App Router) + Prisma + Supabase (PostgreSQL) + Auth.js (Google OAuth), готовый к деплою на Vercel.
 
 ## Преимущества Prisma
 
@@ -8,13 +8,13 @@ SaaS-проект на Next.js (App Router) + Prisma + NeonDB + Auth.js (Google 
 - ✅ **Отличная поддержка TypeScript** - автогенерация типов из схемы
 - ✅ **Миграции** - версионирование изменений схемы БД
 - ✅ **Интуитивный API** - удобные методы для CRUD операций
-- ✅ **Поддержка serverless** - адаптер для Neon с WebSocket-подключениями
+- ✅ **Поддержка serverless** - хорошо работает с Supabase Postgres (включая pooler)
 
 ## Требования
 
 - Node.js 18+ 
 - npm или yarn
-- Аккаунт на [NeonDB](https://neon.tech) для PostgreSQL базы данных
+- Аккаунт на [Supabase](https://supabase.com) для PostgreSQL базы данных
 
 ## Установка
 
@@ -24,21 +24,24 @@ SaaS-проект на Next.js (App Router) + Prisma + NeonDB + Auth.js (Google 
 npm install
 ```
 
-### 2. Настройка базы данных (NeonDB)
+### 2. Настройка базы данных (Supabase)
 
-1. Создайте аккаунт на [neon.tech](https://neon.tech)
-2. Создайте новый проект
-3. В настройках проекта скопируйте **Connection String**
-   - Формат: `postgresql://user:password@host/database?sslmode=require`
-   - Или используйте формат с параметрами
+1. Создайте аккаунт на [Supabase](https://supabase.com) и новый проект
+2. Перейдите в **Project Settings → Database → Connection string**
+3. Скопируйте строки подключения:
+   - **Transaction pooler** (рекомендуется для рантайма на Vercel/Serverless) → в `DATABASE_URL`
+   - **Direct connection** (рекомендуется для миграций/DDL) → в `DIRECT_URL`
 
 ### 3. Настройка переменных окружения
 
 Создайте файл `.env` в корне проекта:
 
 ```env
-# Database (NeonDB)
-DATABASE_URL="postgresql://user:password@ep-xxx-xxx.region.aws.neon.tech/database?sslmode=require"
+# Database (Supabase Postgres)
+# DATABASE_URL: Transaction pooler (PgBouncer). Хорошо подходит для рантайма.
+# DIRECT_URL: Direct connection. Лучше для миграций/DDL.
+DATABASE_URL="postgresql://postgres:password@aws-xx-xx.pooler.supabase.com:6543/postgres?sslmode=require"
+DIRECT_URL="postgresql://postgres:password@db.xxxxxxxxxxxx.supabase.co:5432/postgres?sslmode=require"
 
 # Auth.js (NextAuth) — OAuth Google
 NEXTAUTH_URL="http://localhost:3000"
@@ -53,10 +56,7 @@ GOOGLE_CLIENT_SECRET="ваш-google-client-secret"
 [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }) -as [byte[]])
 ```
 
-**Пример:**
-```env
-DATABASE_URL="postgresql://neondb_owner:password123@ep-cool-darkness-123456.us-east-2.aws.neon.tech/neondb?sslmode=require"
-```
+Примечание: если в URL уже есть `?` (другие параметры), добавляйте SSL как `&sslmode=require`.
 
 ### 4. Настройка схемы и миграция базы данных
 
@@ -96,7 +96,7 @@ npm run dev
 │   ├── seed.ts             # Скрипт для заполнения БД тестовыми данными
 │   └── migrations/         # Миграции (создаются автоматически)
 ├── lib/
-│   └── prisma.ts           # Подключение к базе данных (Neon serverless)
+│   └── prisma.ts           # Подключение к базе данных (PostgreSQL)
 ├── package.json
 ├── tsconfig.json
 └── .env                    # Переменные окружения (создайте вручную)
@@ -204,7 +204,10 @@ npm run build
 1. Перейдите в настройки проекта на Vercel
 2. Добавьте переменную окружения:
    - **Name:** `DATABASE_URL`
-   - **Value:** Ваш connection string из NeonDB
+   - **Value:** ваш connection string из Supabase (желательно Transaction pooler)
+3. (Рекомендуется) Добавьте переменную окружения:
+   - **Name:** `DIRECT_URL`
+   - **Value:** direct connection string из Supabase (для миграций/DDL)
 
 ### 3. Деплой
 
@@ -230,7 +233,7 @@ vercel
 npm run db:push
 ```
 
-Или используйте NeonDB Console для выполнения SQL миграций вручную.
+Или используйте Supabase SQL Editor для выполнения SQL миграций вручную.
 
 ## Решение проблем
 
@@ -257,17 +260,18 @@ npm run db:push
 ### Ошибка подключения к базе данных
 
 **Решение:** 
-1. Проверьте правильность `DATABASE_URL` в `.env`
-2. Убедитесь, что база данных NeonDB активна
-3. Проверьте, что IP-адрес не заблокирован в настройках NeonDB
-4. Убедитесь, что используется правильный формат connection string с `?sslmode=require`
+1. Проверьте правильность `DATABASE_URL`/`DIRECT_URL` в `.env` (или в переменных окружения Vercel)
+2. Убедитесь, что проект Supabase активен и пароль/хост/порт корректны
+3. Для рантайма используйте **pooler** (`DATABASE_URL`), а для миграций — **direct** (`DIRECT_URL`)
+4. Убедитесь, что используется правильный формат connection string с `?sslmode=require` (или `&sslmode=require`, если уже есть параметры)
 
 ### Ошибка при сборке на Vercel
 
 **Решение:**
 1. Убедитесь, что `DATABASE_URL` добавлен в переменные окружения Vercel
-2. Проверьте, что все зависимости установлены в `package.json`
-3. Убедитесь, что `prisma generate` выполняется при сборке (postinstall)
+2. **Value:** ваш connection string из Supabase (желательно pooler) и, при необходимости, `DIRECT_URL` (direct connection)
+3. Проверьте, что все зависимости установлены в `package.json`
+4. Убедитесь, что `prisma generate` выполняется при сборке (postinstall)
 
 ## Аутентификация (Auth.js)
 
@@ -318,8 +322,8 @@ npm run dev
 ## Полезные ссылки
 
 - [Prisma Documentation](https://www.prisma.io/docs)
-- [Prisma + Neon Guide](https://www.prisma.io/docs/orm/overview/databases/neon)
-- [NeonDB Documentation](https://neon.tech/docs)
+- [Prisma + Supabase Guide](https://www.prisma.io/docs/orm/overview/databases/supabase)
+- [Supabase Documentation](https://supabase.com/docs)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Vercel Deployment Guide](https://vercel.com/docs)
 
